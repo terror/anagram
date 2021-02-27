@@ -1,6 +1,6 @@
 [package]
 name          = "anagram"
-version       = "0.0.0"
+version       = "0.1.0"
 authors       = ["Liam <liam@scalzulli.com>"]
 edition       = "2018"
 description   = "A collection of anagram utility functions"
