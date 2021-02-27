@@ -1,12 +1,13 @@
 [package]
-name    = "anagram"
-version = "0.0.0"
-authors = ["Liam <liam@scalzulli.com>"]
-edition = "2018"
-description   = "anagram helpers"
+name          = "anagram"
+version       = "0.0.0"
+authors       = ["Liam <liam@scalzulli.com>"]
+edition       = "2018"
+description   = "A collection of anagram utility functions"
 repository    = "https://github.com/terror/anagram"
 documentation = "https://github.com/terror/anagram"
 homepage      = "https://github.com/terror/anagram"
 license       = "MIT"
 
 [dependencies]
+counter    = "0.5.2"
