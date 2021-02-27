@@ -125,8 +125,8 @@ pub fn get_next(word: &str) -> String {
   let x = word.as_bytes()[i - 1];
   let mut smallest = i;
 
-  // find the smallest char on the right side if i-1'th char
-  // that's grater than word[i - 1]
+  // find the smallest char on the right side of i-1'th char
+  // that's greater than word[i - 1]
   let mut j = i + 1;
   while j < word.chars().count() {
     if word.as_bytes()[j] > x && word.as_bytes()[j] < word.as_bytes()[smallest] {
