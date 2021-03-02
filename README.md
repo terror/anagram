@@ -5,6 +5,13 @@
 
 A collection of anagram utility functions
 
+## Installation
+
+You can install this crate by adding it to your Cargo.toml file
+```
+anagram = "0.3.0"
+```
+
 ## Examples
 
 ```rust
