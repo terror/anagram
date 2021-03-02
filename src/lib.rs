@@ -99,13 +99,13 @@ pub fn is_anagram(left: &str, right: &str) -> bool {
   }
 }
 
-/// Get the next lexicographically greater anagram
-/// (or find the next lexicographically greater permutation of the given string)
-/// This function will return either the next greater permutation or the given
-/// word if it is already the greatest permutation
+/// Get the next lexicographically greater permutation
+/// This function will return either the next greater permutation or the
+/// lexicographically smallest permutation if the given word is the
+/// lexicographically greatest permutation
 /// Examples:
 /// "abc" -> "acb"
-/// "cba" -> "cba"
+/// "cba" -> "abc"
 pub fn get_next(word: &str) -> String {
   let mut i = word.chars().count() - 1;
 
@@ -117,52 +117,37 @@ pub fn get_next(word: &str) -> String {
     i -= 1;
   }
 
-  // word is already the greatest permutation, so return it
+  // we are at the lexicographically greatest permutation so we
+  // return the lexicographically smallest one
   if i == 0 {
-    return word.to_string();
+    let mut chars: Vec<char> = word.chars().collect();
+    chars.sort();
+    return chars.into_iter().collect();
   }
-
-  let x = word.as_bytes()[i - 1];
-  let mut smallest = i;
 
   // find the smallest char on the right side of i-1'th char
   // that's greater than word[i - 1]
   let mut j = i + 1;
+  let mut smallest = i;
+  let mut word_as_bytes: Vec<u8> = word.to_string().into_bytes();
   while j < word.chars().count() {
-    if word.as_bytes()[j] > x && word.as_bytes()[j] < word.as_bytes()[smallest] {
+    if word_as_bytes[j] > word_as_bytes[i - 1] && word_as_bytes[j] < word_as_bytes[smallest] {
       smallest = j;
     }
     j += 1;
   }
 
-  let mut word_as_bytes: Vec<u8> = word.to_string().into_bytes();
-
   // swap smallest with word[i - 1]
-  let t = word_as_bytes[smallest];
-  word_as_bytes[smallest] = word_as_bytes[i - 1];
-  word_as_bytes[i - 1] = t;
+  word_as_bytes.swap(smallest, i - 1);
 
   // sort right half
-  let mut right_half: Vec<u8> = Vec::new();
-
-  for val in i..word.chars().count() {
-    right_half.push(word_as_bytes[val]);
-  }
-
+  let mut right_half: Vec<u8> = word_as_bytes[i..word.chars().count()].to_vec();
   right_half.sort();
 
   // merge back and return as a String
-  let mut ret: Vec<u8> = Vec::new();
-
-  for val in 0..i {
-    ret.push(word_as_bytes[val]);
-  }
-
-  for val in right_half {
-    ret.push(val);
-  }
-
-  from_utf8(&ret).unwrap().to_string()
+  from_utf8(&[&word_as_bytes[0..i], &right_half].concat())
+    .unwrap()
+    .to_string()
 }
 
 #[cfg(test)]
@@ -212,10 +197,10 @@ mod tests {
     assert_eq!(get_next("abc"), "acb");
     assert_eq!(get_next("bac"), "bca");
     assert_eq!(get_next("aaa"), "aaa");
-    assert_eq!(get_next("cba"), "cba");
+    assert_eq!(get_next("cba"), "abc");
     assert_eq!(get_next("218765"), "251678");
     assert_eq!(get_next("1234"), "1243");
-    assert_eq!(get_next("4321"), "4321");
+    assert_eq!(get_next("4321"), "1234");
     assert_eq!(get_next("534976"), "536479");
   }
 }
