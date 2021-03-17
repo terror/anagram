@@ -36,6 +36,11 @@
 use counter::Counter;
 use std::{collections::HashSet, str::from_utf8};
 
+static ASCII_LOWER: [char; 26] = [
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+  't', 'u', 'v', 'w', 'x', 'y', 'z',
+];
+
 fn factorial(n: u128) -> u128 {
   if n <= 1 {
     1
@@ -118,17 +123,39 @@ pub fn is_anagram(left: &str, right: &str) -> bool {
   if left.chars().count() != right.chars().count() {
     false
   } else {
-    let mut count: i128 = 0;
+    let mut count: [i32; 26 as usize] = [0; 26 as usize];
 
     for c in left.chars() {
-      count += c as i128;
+      let pos = if let Some(val) = c.to_digit(10) {
+        val as usize
+      } else {
+        ASCII_LOWER
+          .iter()
+          .position(|&x| x == c.to_lowercase().nth(0).unwrap())
+          .unwrap() as usize
+      };
+
+      count[pos] += 1;
     }
 
     for c in right.chars() {
-      count -= c as i128;
+      let pos = if let Some(val) = c.to_digit(10) {
+        val as usize
+      } else {
+        ASCII_LOWER
+          .iter()
+          .position(|&x| x == c.to_lowercase().nth(0).unwrap())
+          .unwrap() as usize
+      };
+
+      count[pos] -= 1;
+
+      if count[pos] < 0 {
+        return false;
+      }
     }
 
-    count == 0
+    true
   }
 }
 
@@ -209,10 +236,18 @@ mod tests {
 
   #[test]
   fn test_is_anagram() {
-    assert_eq!(is_anagram("hello", "olleh"), true);
     assert_eq!(is_anagram("hello", "ooo"), false);
+    assert_eq!(is_anagram("Hello", "olleH"), true);
+    assert_eq!(is_anagram("hello", "olleh"), true);
     assert_eq!(is_anagram("helicopter", "copterheli"), true);
     assert_eq!(is_anagram("hacker", "hackes"), false);
+    assert_eq!(is_anagram("HaCkER", "hacker"), true);
+    assert_eq!(is_anagram("ac", "bb"), false);
+    assert_eq!(is_anagram("123", "321"), true);
+    assert_eq!(is_anagram("1110002293", "1101009322"), true);
+    assert_eq!(is_anagram("1102eeaA", "20Svv00"), false);
+    assert_eq!(is_anagram("1102eeaA", "0112EEaA"), true);
+    assert_eq!(is_anagram("1102eeaA", "0112eaAe"), true);
   }
 
   #[test]
